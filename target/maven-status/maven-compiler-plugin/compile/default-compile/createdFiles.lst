@@ -1,0 +1,12 @@
+games\Game.class
+tournaments\Tournament.class
+games\PrisonersDilemmaGame.class
+robots\Robot.class
+robots\RandomBot.class
+listeners\MoveListener.class
+App.class
+robots\History.class
+robots\CopyBot.class
+listeners\ScoreListener.class
+tournaments\RoundRobinTournament.class
+robots\DefectBot.class
