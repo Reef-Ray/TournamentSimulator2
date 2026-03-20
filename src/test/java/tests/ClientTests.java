@@ -1,14 +1,17 @@
 package tests;
 
 import clients.TournamentClient;
+import clients.ClientApp;
+import clients.ClientChanges;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.env.Environment;
+
 import servers.TournamentServer;
 import servers.TournamentController;
 import tournaments.RoundRobinTournament;
@@ -19,34 +22,71 @@ import robots.RemoteBot;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(
-		webEnvironment = WebEnvironment.RANDOM_PORT,
-		classes = TournamentClient.class
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    classes = ClientTests.TestApp.class
 )
-@AutoConfigureRestTestClient
 public class ClientTests {
 
-    @Autowired
+    @LocalServerPort
     private int port;
 
     @Autowired
     private Environment env;
 
+    @Autowired
+    private TournamentServer server;
+
     @Test
     void registerRemoteBotIntegrationTest() {
-        // Set up server and tournament
-        Tournament t = new RoundRobinTournament(new java.util.ArrayList<>(), new PrisonersDilemmaGame(1), 5);
-        TournamentServer server = new TournamentServer();
-        server.addTournament("T1", t);
-        TournamentController controller = new TournamentController(server);
-
-        // Client uses Spring Environment to get port
         TournamentClient client = new TournamentClient(env);
 
-        // Call register
-        assertDoesNotThrow(() -> client.register("http://localhost:" + port, "BotA", "T1", "remote"));
+        String baseUrl = "http://localhost:" + port;
 
-        // Verify the bot was added
+        assertDoesNotThrow(() ->
+            client.register(baseUrl, "BotA", "T1", "remote")
+        );
+
+        Tournament t = server.getTournament("T1");
+
         assertEquals(1, t.getPlayers().size());
         assertTrue(t.getPlayers().get(0) instanceof RemoteBot);
+    }
+
+    @Test
+    void mainRunsWithoutCrash() {
+        assertDoesNotThrow(() -> 
+            ClientApp.main(new String[]{})
+        );
+    }
+
+    // 🔥 This replaces a separate TestApplication file
+    @SpringBootApplication(scanBasePackages = {
+            "servers", "tournaments", "games", "robots"
+    })
+    static class TestApp {
+
+        @Bean
+        public TournamentServer tournamentServer() {
+            Tournament t = new RoundRobinTournament(
+                new java.util.ArrayList<>(),
+                new PrisonersDilemmaGame(1),
+                5
+            );
+
+            TournamentServer server = new TournamentServer();
+            server.addTournament("T1", t);
+            return server;
+        }
+
+        @Bean
+        public TournamentController tournamentController(TournamentServer server) {
+            return new TournamentController(server);
+        }
+
+        // Only include this if needed
+        @Bean
+        public ClientChanges clientChanges() {
+            return new ClientChanges();
+        }
     }
 }

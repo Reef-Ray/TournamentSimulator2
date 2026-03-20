@@ -60,7 +60,6 @@ public class RemoteBotTests {
 
     @Test
     void remoteBotGetActionReturnsMockedValue() {
-        RestClient mockClient = mock(RestClient.class);
         RemoteBot bot = new RemoteBot("BotA", "127.0.0.1", "8080") {
             @Override
             public String getAction(String opponentName) {
