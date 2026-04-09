@@ -22,4 +22,19 @@ public class RoundRobinTournament extends Tournament {
 
         return matches;
     }
+
+    @Override
+    public boolean checkEnd() {
+        return finished; // Round Robin ends after one full pass through the bracket
+    }
+    
+    @Override
+    public boolean isOpen() {
+        if (maxPlayers == 0) {
+            return true; // Local tournaments are always open    
+        } else if (players.size() >= maxPlayers) {
+            return false;
+        }
+        return true;
+    }
 }

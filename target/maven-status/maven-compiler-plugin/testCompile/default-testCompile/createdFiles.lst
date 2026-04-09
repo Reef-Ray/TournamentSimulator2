@@ -1,0 +1,10 @@
+tests\RemoteBotTests.class
+tests\AllTests.class
+tests\AllTests$StaticRobot.class
+tests\RemoteBotTests$1.class
+tests\AllTests$MockScoreListener.class
+tests\ClientTests.class
+tests\RemoteBotTests$3.class
+tests\ClientTests$TestApp.class
+tests\AllTests$MockMoveListener.class
+tests\RemoteBotTests$2.class

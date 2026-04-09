@@ -36,19 +36,6 @@ public abstract class Tournament {
         finished = true;
     }
 
-    public boolean checkEnd() {
-        return finished;
-    }
-
-    public boolean isOpen() {
-        if (maxPlayers == 0) {
-            return true; // Local tournaments are always open    
-        }else if (players.size() >= maxPlayers) {
-            return false;
-        }
-        return true;
-    }
-
     public void addPlayer(Robot bot) {
         if (isOpen()) {
             players.add(bot);
@@ -62,4 +49,8 @@ public abstract class Tournament {
     }
 
     public abstract List<Robot[]> getBracket();
+
+    public abstract boolean checkEnd();
+
+    public abstract boolean isOpen();
 }

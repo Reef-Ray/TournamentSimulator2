@@ -4,6 +4,8 @@ import games.PrisonersDilemmaGame;
 import robots.*;
 import tournaments.RoundRobinTournament;
 import tournaments.Tournament;
+import listeners.MoveListener;
+import listeners.ScoreListener;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +26,40 @@ public class AllTests {
         @Override
         public String getAction(String enemyName) {
             return move;
+        }
+    }
+
+    static class MockMoveListener extends MoveListener {
+        public int callCount = 0;
+        public String lastR1;
+        public String lastM1;
+        public String lastR2;
+        public String lastM2;
+
+        @Override
+        public void updateMove(String r1, String m1, String r2, String m2) {
+            callCount++;
+            lastR1 = r1;
+            lastM1 = m1;
+            lastR2 = r2;
+            lastM2 = m2;
+        }
+    }
+
+    static class MockScoreListener extends ScoreListener {
+        public int callCount = 0;
+        public String lastR1;
+        public int lastS1;
+        public String lastR2;
+        public int lastS2;
+
+        @Override
+        public void updateScore(String r1, int s1, String r2, int s2) {
+            callCount++;
+            lastR1 = r1;
+            lastS1 = s1;
+            lastR2 = r2;
+            lastS2 = s2;
         }
     }
 
@@ -250,5 +286,253 @@ public class AllTests {
         assertEquals("Cooperate", info.history().get(0).player1Move);
         assertEquals("Defect", info.history().get(0).player2Move);
         assertArrayEquals(new int[]{3,0}, info.history().get(0).outcome);
+    }
+
+    // ===== COMPREHENSIVE PRISONER'S DILEMMA GAME TESTS =====
+    
+    @Test
+    void pdg_defectDefect_yields1and1() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
+        StaticRobot r1 = new StaticRobot("A","Defect");
+        StaticRobot r2 = new StaticRobot("B","Defect");
+
+        game.run(r1, r2);
+
+        assertEquals(1, r1.getScore());
+        assertEquals(1, r2.getScore());
+    }
+
+    @Test
+    void pdg_cooperateDefect_yields0and5() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
+        StaticRobot r1 = new StaticRobot("A","Cooperate");
+        StaticRobot r2 = new StaticRobot("B","Defect");
+
+        game.run(r1, r2);
+
+        assertEquals(0, r1.getScore());
+        assertEquals(5, r2.getScore());
+    }
+
+    @Test
+    void pdg_multipleRounds_scoresAccumulate() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(3);
+        StaticRobot r1 = new StaticRobot("A","Defect");
+        StaticRobot r2 = new StaticRobot("B","Cooperate");
+
+        game.run(r1, r2);
+
+        assertEquals(15, r1.getScore());  // 5 + 5 + 5
+        assertEquals(0, r2.getScore());   // 0 + 0 + 0
+        assertEquals(3, r1.getHistory().size());
+        assertEquals(3, r2.getHistory().size());
+    }
+
+    @Test
+    void pdg_invalidMoveByPlayer1_yields0for1_5for2() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
+        StaticRobot r1 = new StaticRobot("A","Invalid");
+        StaticRobot r2 = new StaticRobot("B","Cooperate");
+
+        game.run(r1, r2);
+
+        assertEquals(0, r1.getScore());
+        assertEquals(5, r2.getScore());
+    }
+
+    @Test
+    void pdg_invalidMoveByPlayer2_yields5for1_0for2() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
+        StaticRobot r1 = new StaticRobot("A","Cooperate");
+        StaticRobot r2 = new StaticRobot("B","Invalid");
+
+        game.run(r1, r2);
+
+        assertEquals(5, r1.getScore());
+        assertEquals(0, r2.getScore());
+    }
+
+    @Test
+    void pdg_bothInvalidMoves_yields0and0() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
+        StaticRobot r1 = new StaticRobot("A","Invalid1");
+        StaticRobot r2 = new StaticRobot("B","Invalid2");
+
+        game.run(r1, r2);
+
+        assertEquals(0, r1.getScore());
+        assertEquals(0, r2.getScore());
+    }
+
+    // ===== MOVE LISTENER TESTS =====
+
+    @Test
+    void moveListener_isCalledOncePerRound() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(3);
+        MockMoveListener listener = new MockMoveListener();
+        game.addMoveListener(listener);
+
+        StaticRobot r1 = new StaticRobot("A","Cooperate");
+        StaticRobot r2 = new StaticRobot("B","Defect");
+
+        game.run(r1, r2);
+
+        assertEquals(3, listener.callCount);
+    }
+
+    @Test
+    void moveListener_receivesCorrectMoveData() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
+        MockMoveListener listener = new MockMoveListener();
+        game.addMoveListener(listener);
+
+        StaticRobot r1 = new StaticRobot("A","Cooperate");
+        StaticRobot r2 = new StaticRobot("B","Defect");
+
+        game.run(r1, r2);
+
+        assertEquals(1, listener.callCount);
+        assertEquals("A", listener.lastR1);
+        assertEquals("Cooperate", listener.lastM1);
+        assertEquals("B", listener.lastR2);
+        assertEquals("Defect", listener.lastM2);
+    }
+
+    @Test
+    void moveListener_multipleListeners_allCalled() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
+        MockMoveListener listener1 = new MockMoveListener();
+        MockMoveListener listener2 = new MockMoveListener();
+        game.addMoveListener(listener1);
+        game.addMoveListener(listener2);
+
+        StaticRobot r1 = new StaticRobot("A","Cooperate");
+        StaticRobot r2 = new StaticRobot("B","Cooperate");
+
+        game.run(r1, r2);
+
+        assertEquals(1, listener1.callCount);
+        assertEquals(1, listener2.callCount);
+    }
+
+    @Test
+    void moveListener_removedListener_notCalled() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
+        MockMoveListener listener = new MockMoveListener();
+        game.addMoveListener(listener);
+        game.removeMoveListener(listener);
+
+        StaticRobot r1 = new StaticRobot("A","Cooperate");
+        StaticRobot r2 = new StaticRobot("B","Defect");
+
+        game.run(r1, r2);
+
+        assertEquals(0, listener.callCount);
+    }
+
+    // ===== SCORE LISTENER TESTS =====
+
+    @Test
+    void scoreListener_isCalledOnceAtEnd() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(3);
+        MockScoreListener listener = new MockScoreListener();
+        game.addScoreListener(listener);
+
+        StaticRobot r1 = new StaticRobot("A","Cooperate");
+        StaticRobot r2 = new StaticRobot("B","Cooperate");
+
+        game.run(r1, r2);
+
+        assertEquals(1, listener.callCount);
+    }
+
+    @Test
+    void scoreListener_receivesCorrectScoreData() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(3);
+        MockScoreListener listener = new MockScoreListener();
+        game.addScoreListener(listener);
+
+        StaticRobot r1 = new StaticRobot("A","Defect");
+        StaticRobot r2 = new StaticRobot("B","Cooperate");
+
+        game.run(r1, r2);
+
+        assertEquals(1, listener.callCount);
+        assertEquals("A", listener.lastR1);
+        assertEquals(15, listener.lastS1);  // 5 * 3 rounds
+        assertEquals("B", listener.lastR2);
+        assertEquals(0, listener.lastS2);   // 0 * 3 rounds
+    }
+
+    @Test
+    void scoreListener_multipleListeners_allCalled() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
+        MockScoreListener listener1 = new MockScoreListener();
+        MockScoreListener listener2 = new MockScoreListener();
+        game.addScoreListener(listener1);
+        game.addScoreListener(listener2);
+
+        StaticRobot r1 = new StaticRobot("A","Cooperate");
+        StaticRobot r2 = new StaticRobot("B","Cooperate");
+
+        game.run(r1, r2);
+
+        assertEquals(1, listener1.callCount);
+        assertEquals(1, listener2.callCount);
+    }
+
+    @Test
+    void scoreListener_removedListener_notCalled() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
+        MockScoreListener listener = new MockScoreListener();
+        game.addScoreListener(listener);
+        game.removeScoreListener(listener);
+
+        StaticRobot r1 = new StaticRobot("A","Cooperate");
+        StaticRobot r2 = new StaticRobot("B","Defect");
+
+        game.run(r1, r2);
+
+        assertEquals(0, listener.callCount);
+    }
+
+    // ===== COPYBOT PLAYER 1 TESTS =====
+
+    @Test
+    void copyBot_asPlayer1_copiesEnemyMove() {
+        // This test specifically covers CopyBot when it's player 1 in a game
+        // Real gameplay scenario: CopyBot vs DefectBot
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(2);
+        CopyBot copybot = new CopyBot("CopyBot");
+        DefectBot defectbot = new DefectBot("DefectBot");
+
+        game.run(copybot, defectbot);
+
+        // After first round, CopyBot should have history with DefectBot's move (Defect)
+        // On second round, CopyBot should return "Defect"
+        assertEquals(2, copybot.getHistory().size());
+        assertEquals("Defect", copybot.getAction("DefectBot"));
+    }
+
+    @Test
+    void copyBot_withMixedHistory_copiesMostRecentEnemyMove() {
+        CopyBot c = new CopyBot("C");
+        // Simulate real gameplay where CopyBot is player1 (C is always player1 in its own history)
+        c.addHistory(new History("C","Enemy1","Cooperate","Defect", new int[]{0,5}));
+        c.addHistory(new History("C","Enemy2","Defect","Cooperate", new int[]{5,0}));
+        c.addHistory(new History("C","Enemy1","Cooperate","Cooperate", new int[]{3,3}));
+
+        // Most recent interaction with Enemy1 is Cooperate (player2Move in last entry)
+        assertEquals("Cooperate", c.getAction("Enemy1"));
+    }
+
+    @Test
+    void copyBot_noHistoryWithEnemy_defaulstToCooperate() {
+        CopyBot c = new CopyBot("C");
+        c.addHistory(new History("C","Enemy1","Cooperate","Defect", new int[]{0,5}));
+
+        // No history with Enemy2, should default to Cooperate
+        assertEquals("Cooperate", c.getAction("Enemy2"));
+    }
 }
-}
+

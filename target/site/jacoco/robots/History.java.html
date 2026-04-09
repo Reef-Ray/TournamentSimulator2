@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>History.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">REST</a> &gt; <a href="index.source.html" class="el_package">robots</a> &gt; <span class="el_source">History.java</span></div><h1>History.java</h1><pre class="source lang-java linenums">package robots;
+
+public class History {
+    public String player1;
+    public String player2;
+    public String player1Move;
+    public String player2Move;
+    public int[] outcome; // [score1, score2]
+
+    public History(String player1, String player2,
+                   String player1Move, String player2Move,
+<span class="fc" id="L12">                   int[] outcome) {</span>
+<span class="fc" id="L13">        this.player1 = player1;</span>
+<span class="fc" id="L14">        this.player2 = player2;</span>
+<span class="fc" id="L15">        this.player1Move = player1Move;</span>
+<span class="fc" id="L16">        this.player2Move = player2Move;</span>
+<span class="fc" id="L17">        this.outcome = outcome;</span>
+<span class="fc" id="L18">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

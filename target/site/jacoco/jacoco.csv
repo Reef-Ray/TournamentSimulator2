@@ -1,0 +1,26 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+REST,default,App,85,0,2,0,15,0,3,0,2,0
+REST,default,App.new RemoteBot() {...},8,0,0,0,2,0,2,0,2,0
+REST,default,App.new RemoteBot() {...},8,0,0,0,2,0,2,0,2,0
+REST,default,App.new RemoteBot() {...},14,0,2,0,2,0,3,0,2,0
+REST,default,App.new RemoteBot() {...},14,0,2,0,2,0,3,0,2,0
+REST,tournaments,RoundRobinTournament,0,53,0,4,0,7,0,4,0,2
+REST,tournaments,Tournament,5,98,2,8,2,26,2,11,0,8
+REST,servers,ServerApplicationApp,5,3,0,0,2,1,1,1,1,1
+REST,servers,TournamentController,0,15,0,0,0,4,0,2,0,2
+REST,servers,TournamentServer,29,55,7,5,7,12,5,6,1,4
+REST,clients,ClientApp,0,23,0,0,0,5,0,2,0,2
+REST,clients,ClientChanges,2,3,0,0,1,1,1,1,1,1
+REST,clients,TournamentClient,0,35,0,0,0,8,0,2,0,2
+REST,listeners,MoveListener,0,11,0,0,0,3,0,2,0,2
+REST,listeners,ScoreListener,0,20,0,0,0,6,0,2,0,2
+REST,templates,RemoteInfo,0,9,0,0,0,1,0,1,0,1
+REST,games,Game,0,194,0,8,0,41,0,13,0,9
+REST,games,PrisonersDilemmaGame,0,137,2,26,0,17,2,14,0,2
+REST,robots,CopyBot,0,38,0,6,0,9,0,5,0,2
+REST,robots,HumanBot,11,0,0,0,4,0,2,0,2,0
+REST,robots,Robot,0,91,1,5,0,19,1,8,0,6
+REST,robots,RemoteBot,39,13,0,0,11,5,1,1,1,1
+REST,robots,DefectBot,0,6,0,0,0,3,0,2,0,2
+REST,robots,RandomBot,2,10,1,1,1,4,1,2,0,2
+REST,robots,History,0,18,0,0,0,7,0,1,0,1

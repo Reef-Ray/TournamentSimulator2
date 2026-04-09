@@ -1,9 +1,6 @@
 package tests;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.web.client.RestClient;
-import org.springframework.http.ResponseEntity;
 import robots.*;
 import servers.TournamentServer;
 import tournaments.RoundRobinTournament;
@@ -11,11 +8,8 @@ import tournaments.Tournament;
 import games.PrisonersDilemmaGame;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 public class RemoteBotTests {
 
