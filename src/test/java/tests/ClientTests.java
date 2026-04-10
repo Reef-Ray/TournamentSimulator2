@@ -9,11 +9,11 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import servers.TournamentServer;
-import servers.TournamentController;
 import tournaments.RoundRobinTournament;
 import tournaments.Tournament;
 import games.PrisonersDilemmaGame;
 import templates.RemoteInfo;
+import robots.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,9 +103,23 @@ public class ClientTests {
             return server;
         }
 
-        @Bean
-        public TournamentController tournamentController(TournamentServer server) {
-            return new TournamentController(server);
-        }
+    }
+
+    @Test
+    void testRemoteBot_success() {
+        Robot bot = new RemoteBot("Jeff", "localhost", String.valueOf(port));
+        bot.addHistory(new History("Jeff", "Opponent", "Cooperate", "Defect", new int[]{0, 5}));
+        String result = bot.getAction("Opponent");
+
+        assertTrue(result.equals("Cooperate") || result.equals("Defect")); 
+    }
+
+    @Test
+    void testRemoteBot_failure() {
+        RemoteBot bot = new RemoteBot("BadBot", "256.256.256.256", "9999");
+
+        String result = bot.getAction("Opponent");
+
+        assertEquals("Error", result); 
     }
 }

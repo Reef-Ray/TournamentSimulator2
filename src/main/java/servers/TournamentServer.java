@@ -1,9 +1,13 @@
 package servers;
 
 import java.util.*;
+
+import org.springframework.stereotype.Service;
+
 import robots.*;
 import tournaments.*;
 
+@Service
 public class TournamentServer {
 
   private final Map<String, Tournament> tournaments = new HashMap<>();
@@ -33,6 +37,14 @@ public class TournamentServer {
 
     public Tournament getTournament(String name) {
         return tournaments.get(name);
+    }
+
+    public List<String> getAllTournaments() {
+        List<String> all = new ArrayList<>();
+        for (Tournament t : tournaments.values()) {
+            all.add(t.getName());
+        }
+        return all;
     }
 
     public List<String> getAvailableTournaments() {

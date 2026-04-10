@@ -32,7 +32,7 @@ public class RemoteBot extends Robot {
                     .body(String.class);
         } catch (Exception e) {
             System.err.println("Communication failure with bot " + getName() + " at " + uri);
-            return null; 
+            return "Error"; // Default action on failure
         }
     }
 }

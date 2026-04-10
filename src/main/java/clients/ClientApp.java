@@ -44,14 +44,6 @@ public class ClientApp extends SpringBootServletInitializer {
         };
     }
 
-    public int getAssignedPort() {
-        return assignedPort;
-    }
-
-    public String getAssignedIP() {
-        return assignedIP;
-    }
-
     @PostMapping("/action")
     @ResponseStatus(HttpStatus.OK)
     public String getAction(@RequestBody RemoteInfo details) {

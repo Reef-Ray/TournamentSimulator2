@@ -15,7 +15,7 @@ public class TournamentController {
 
     @GetMapping("/tournaments")
     public List<String> getTournaments() {
-        return service.getAvailableTournaments();
+        return service.getAllTournaments();
     }
 
     @PostMapping("/register")

@@ -30,7 +30,7 @@ public class AllTests {
     }
 
     @Test
-    void pdg_CooperateVsCooperate_Yields3and3() {
+    void testCooperateVsCooperate() {
         PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
         StaticRobot r1 = new StaticRobot("A", "Cooperate");
         StaticRobot r2 = new StaticRobot("B", "Cooperate");
@@ -44,7 +44,7 @@ public class AllTests {
     }
 
     @Test
-    void pdg_BothDefect_Yields1and1() {
+    void testDefectVsDefect() {
         PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
         StaticRobot r1 = new StaticRobot("A", "Defect");
         StaticRobot r2 = new StaticRobot("B", "Defect");
@@ -55,8 +55,20 @@ public class AllTests {
         assertEquals(1, r2.getScore());
     }
 
+        @Test
+    void testDefectVsCooperate() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
+        StaticRobot r1 = new StaticRobot("A", "Defect");
+        StaticRobot r2 = new StaticRobot("B", "Cooperate");
+
+        game.run(r1, r2);
+
+        assertEquals(5, r1.getScore());
+        assertEquals(0, r2.getScore());
+    }
+
     @Test
-    void pdg_InvalidMoves_HandledCorrectly() {
+    void testInvalidMoves() {
         PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
         StaticRobot r1 = new StaticRobot("A", "Invalid");
         StaticRobot r2 = new StaticRobot("B", "Invalid");
@@ -68,20 +80,20 @@ public class AllTests {
     }
 
     @Test
-    void copyBot_DefaultsToCooperateWhenNoHistory() {
+    void testCopyBot_DefaultsToCooperateWhenNoHistory() {
         CopyBot c = new CopyBot("CopyBot");
         assertEquals("Cooperate", c.getAction("NewOpponent"));
     }
 
     @Test
-    void copyBot_CopiesMostRecentEnemyMove() {
+    void testCopyBot_CopiesMostRecentEnemyMove() {
         CopyBot c = new CopyBot("CopyBot");
         c.addHistory(new History("Enemy", "CopyBot", "Defect", "Cooperate", new int[]{5, 0}));
         assertEquals("Defect", c.getAction("Enemy"));
     }
 
     @Test
-    void robot_Scoring_AccumulatesCorrectly() {
+    void testRobot_Scoring_AccumulatesCorrectly() {
         Robot r = new CopyBot("TestBot");
         assertEquals(0, r.getScore());
         r.addHistory(new History("TestBot", "A", "Cooperate", "Cooperate", new int[]{3, 3}));
@@ -91,7 +103,7 @@ public class AllTests {
     }
 
     @Test
-    void robot_BasicProperties() {
+    void testRobot_BasicProperties() {
         Robot r = new DefectBot("MyBot");
         assertEquals("MyBot", r.getName());
         assertNotNull(r.getHistory());
@@ -114,15 +126,17 @@ public class AllTests {
     @Test
     void tournament_RunsToCompletion() {
         List<Robot> players = Arrays.asList(
-                new DefectBot("A"),
-                new DefectBot("B")
+                new CooperateBot("A"),
+                new DefectBot("B"),
+                new DefectBot("C")
         );
 
         RoundRobinTournament t = new RoundRobinTournament("Test", players, new PrisonersDilemmaGame(1), 0);
         assertFalse(t.checkEnd());
-        t.run();
+        Robot[] results = t.main();
         assertTrue(t.checkEnd());
-        assertEquals(2, t.main().length);
+        assertEquals(3, results.length);
+        assertEquals("B", results[0].getName());
     }
 
 }

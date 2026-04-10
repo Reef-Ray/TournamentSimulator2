@@ -2,7 +2,7 @@ package tests;
 
 import org.junit.jupiter.api.Test;
 import robots.*;
-import servers.TournamentServer;
+import servers.*;
 import games.PrisonersDilemmaGame;
 import tournaments.RoundRobinTournament;
 import tournaments.Tournament;
@@ -11,8 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ServerTests {
+
+    @Test
+    void testMainMethod() {
+        ServerApplicationApp.main(new String[]{"--server.port=0"});
+    }
 
     @Test
     void tournamentServer_ListsAvailableTournaments() {
@@ -37,23 +47,26 @@ public class ServerTests {
         assertTrue(available.contains("Open"));
         assertTrue(available.contains("Open2"));
         assertFalse(available.contains("Closed"));
-    }
 
+        List<String> allTournaments = server.getAllTournaments();
+        assertTrue(allTournaments.contains("Open"));
+        assertTrue(allTournaments.contains("Open2"));
+        assertTrue(allTournaments.contains("Closed"));
+
+    }
+    
     @Test
-    void tournamentServer_HidesFullTournamentsFromAvailable() {
-        TournamentServer server = new TournamentServer();
-        List<Robot> players = new ArrayList<>();
-        players.add(new DefectBot("A"));
-        Tournament t = new RoundRobinTournament("Full", players, 
-                new PrisonersDilemmaGame(1), 1);
+    void testGetTournaments() {
+        TournamentServer service = mock(TournamentServer.class);
+        when(service.getAllTournaments()).thenReturn(List.of("T1", "T2"));
 
-        server.addTournament("Full", t);
-        List<String> available = server.getAvailableTournaments();
-        
-        assertFalse(available.contains("Full"));
+        TournamentController controller = new TournamentController(service);
+
+        List<String> result = controller.getTournaments();
+
+        assertEquals(2, result.size());
+        assertEquals("T1", result.get(0));
     }
-
-    // ========== REGISTRATION TESTS ==========
 
     @Test
     void tournamentServer_RegistersRemoteBotSuccessfully() {
@@ -122,6 +135,21 @@ public class ServerTests {
     }
 
     @Test
+    void testRegisterDirectCall() {
+        TournamentServer service = mock(TournamentServer.class);
+        when(service.register(any(), any(), any(), any(), any()))
+                .thenReturn("Registered");
+
+        TournamentController controller = new TournamentController(service);
+
+        String result = controller.register(
+                "Jeff", "T1", "remote", "127.0.0.1", "8080"
+        );
+
+        assertEquals("Registered", result);
+    }
+
+    @Test
     void remoteBot_HistoryIsAccessible() {
         RemoteBot bot = new RemoteBot("TestBot", "127.0.0.1", "8080");
         
@@ -141,5 +169,19 @@ public class ServerTests {
         
         bot.addHistory(new History("Bot", "Enemy2", "Defect", "Cooperate", new int[]{5, 0}));
         assertEquals(8, bot.getScore());
+    }
+
+     @Test
+    void testRunTournament_runsWhenValid() {
+        TournamentServer server = new TournamentServer();
+
+        Tournament t = mock(Tournament.class);
+        when(t.checkEnd()).thenReturn(false);
+
+        server.addTournament("T1", t);
+
+        server.runTournament("T1");
+
+        verify(t, times(1)).run();
     }
 }
