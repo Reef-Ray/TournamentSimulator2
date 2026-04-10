@@ -6,15 +6,17 @@ import java.util.*;
 
 public abstract class Tournament {
 
+    protected String name;
     protected List<Robot> players;
     protected Game game;
     protected boolean finished = false;
-    protected int maxPlayers; // 0 for local tournaments since players will already be added
+    protected int endCondition; // 0 for local tournaments since players will already be added
 
-    public Tournament(List<Robot> players, Game game, int maxPlayers) {
+    public Tournament(String name, List<Robot> players, Game game, int endCondition) {
+        this.name = name;
         this.players = players;
         this.game = game;
-        this.maxPlayers = maxPlayers;
+        this.endCondition = endCondition;
     }
 
     public Robot[] main() {
@@ -40,12 +42,16 @@ public abstract class Tournament {
         if (isOpen()) {
             players.add(bot);
         } else {
-            System.out.println("Cannot add player: tournament is full");
+            System.out.println("Cannot add player: Registration closed");
         }
     }
 
     public List<Robot> getPlayers() {
         return players;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public abstract List<Robot[]> getBracket();

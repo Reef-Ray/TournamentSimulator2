@@ -5,8 +5,8 @@ import java.util.*;
 
 public class RoundRobinTournament extends Tournament {
 
-    public RoundRobinTournament(List<Robot> robots, Game game, int maxPlayers) {
-        super(robots, game, maxPlayers);
+    public RoundRobinTournament(String name, List<Robot> robots, Game game, int maxPlayers) {
+        super(name, robots, game, maxPlayers);
     }
 
     @Override
@@ -29,10 +29,10 @@ public class RoundRobinTournament extends Tournament {
     }
     
     @Override
-    public boolean isOpen() {
-        if (maxPlayers == 0) {
+    public boolean isOpen() { //player count
+        if (endCondition == 0) {
             return true; // Local tournaments are always open    
-        } else if (players.size() >= maxPlayers) {
+        } else if (players.size() >= endCondition) {
             return false;
         }
         return true;

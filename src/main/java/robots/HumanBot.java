@@ -8,6 +8,7 @@ public class HumanBot extends Robot {
 
     public HumanBot(String name) {
         super(name);
+        this.scanner = new Scanner(System.in);
     }
 
     @Override

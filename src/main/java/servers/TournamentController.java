@@ -1,7 +1,7 @@
 package servers;
 
 import org.springframework.web.bind.annotation.*;
-import robots.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/tournament")
@@ -11,6 +11,11 @@ public class TournamentController {
 
     public TournamentController(TournamentServer service) {
         this.service = service;
+    }
+
+    @GetMapping("/tournaments")
+    public List<String> getTournaments() {
+        return service.getAvailableTournaments();
     }
 
     @PostMapping("/register")

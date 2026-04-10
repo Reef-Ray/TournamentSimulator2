@@ -35,6 +35,16 @@ public class TournamentServer {
         return tournaments.get(name);
     }
 
+    public List<String> getAvailableTournaments() {
+        List<String> available = new ArrayList<>();
+        for (Tournament t : tournaments.values()) {
+            if (t.isOpen()) {
+                available.add(t.getName());
+            }
+        }
+        return available;
+    }
+
     public void runTournament(String name) {
         Tournament t = tournaments.get(name);
         if (t != null && !t.checkEnd()) {
