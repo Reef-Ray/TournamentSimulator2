@@ -18,6 +18,19 @@ public class TournamentController {
         return service.getAllTournaments();
     }
 
+    @GetMapping("/available")
+    public List<String> getAvailableTournaments() {
+        return service.getAvailableTournaments();
+    }
+
+    @GetMapping("/info")
+    public java.util.Map<String, Integer> info(@RequestParam String name) {
+        java.util.Map<String, Integer> map = new java.util.HashMap<>();
+        map.put("current", service.getPlayerCount(name));
+        map.put("max", service.getMaxPlayers(name));
+        return map;
+    }
+
     @PostMapping("/register")
     public String register(@RequestParam String name,
                            @RequestParam String tournament,
@@ -26,5 +39,10 @@ public class TournamentController {
                            @RequestParam String port) {
 
         return service.register(name, tournament, type, ip, port);
+    }
+
+    @GetMapping("/observe")
+    public java.util.List<String> observe(@RequestParam String name) {
+        return service.getObserverMessages(name);
     }
 }

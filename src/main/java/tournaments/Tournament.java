@@ -50,6 +50,10 @@ public abstract class Tournament {
         return players;
     }
 
+    public int getMaxPlayers() {
+        return endCondition;
+    }
+
     public String getName() {
         return name;
     }

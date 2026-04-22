@@ -3,13 +3,10 @@ package tests;
 import games.PrisonersDilemmaGame;
 import robots.*;
 import tournaments.RoundRobinTournament;
-import listeners.MoveListener;
-import listeners.ScoreListener;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
