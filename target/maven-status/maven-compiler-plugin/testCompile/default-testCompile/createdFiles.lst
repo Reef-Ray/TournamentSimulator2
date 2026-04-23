@@ -1,0 +1,7 @@
+tests\ListviewTests.class
+tests\AllTests.class
+tests\AllTests$StaticRobot.class
+tests\ClientTests.class
+tests\SpectateViewTests.class
+tests\ClientTests$TestApp.class
+tests\ServerTests.class
