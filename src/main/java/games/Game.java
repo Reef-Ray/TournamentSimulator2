@@ -59,6 +59,13 @@ public abstract class Game {
             score2 += result[1];
 
             roundsPlayed++;
+
+            // Add 3 second delay between rounds
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.err.println("Tournament round delay interrupted: " + e.getMessage());
+            }
         }
 
         notifyScoreListeners(r1.getName(), score1, r2.getName(), score2);

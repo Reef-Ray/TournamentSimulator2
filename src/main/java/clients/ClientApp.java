@@ -19,7 +19,7 @@ import java.net.UnknownHostException;
 @RestController
 public class ClientApp extends SpringBootServletInitializer {
 
-    private Robot bot = new RandomBot("ClientBot");
+    private Robot bot = new DefectBot("ClientBot");
     private int assignedPort;
     private String assignedIP = "localhost";
 

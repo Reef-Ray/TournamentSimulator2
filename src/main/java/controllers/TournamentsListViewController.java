@@ -97,6 +97,7 @@ public class TournamentsListViewController {
             }
 
             final String url = baseUrl == null || baseUrl.isBlank() ? "http://127.0.0.1:8080" : baseUrl;
+            viewModel.setBaseUrl(url);
             viewModel.showRegistrationView(chosen);
         } catch (Exception e) {
             System.err.println("Failed to open registration view: " + e.getMessage());

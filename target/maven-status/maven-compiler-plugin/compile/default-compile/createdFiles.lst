@@ -10,9 +10,11 @@ robots\HumanBot.class
 servers\TournamentServer.class
 robots\CooperateBot.class
 robots\History.class
+robots\LogEntry.class
 servers\TournamentController.class
 controllers\ViewTransitionModelInterface.class
 controllers\RegistrationViewController.class
+robots\LoggingBot.class
 robots\RandomBot.class
 controllers\SpectateTournamentViewController.class
 listeners\MoveListener.class
@@ -22,6 +24,7 @@ servers\ServerApplicationApp.class
 templates\RemoteInfo.class
 tournaments\Tournament.class
 robots\Robot.class
+servers\LogController.class
 clients\ClientApp.class
 listeners\ScoreListener.class
 robots\DefectBot.class

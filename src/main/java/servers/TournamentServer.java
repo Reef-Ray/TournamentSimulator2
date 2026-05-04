@@ -1,6 +1,8 @@
 package servers;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,7 @@ import tournaments.*;
 public class TournamentServer {
 
   private final Map<String, Tournament> tournaments = new HashMap<>();
+  private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     public void addTournament(String name, Tournament t) {
         tournaments.put(name, t);
@@ -72,7 +75,15 @@ public class TournamentServer {
     public void runTournament(String name) {
         Tournament t = tournaments.get(name);
         if (t != null && !t.checkEnd()) {
-            t.run();
+            // Run tournament asynchronously to avoid blocking the HTTP request handler
+            executorService.submit(() -> {
+                try {
+                    t.run();
+                } catch (Exception e) {
+                    System.err.println("Error running tournament " + name + ": " + e.getMessage());
+                    e.printStackTrace();
+                }
+            });
         }
     }
 

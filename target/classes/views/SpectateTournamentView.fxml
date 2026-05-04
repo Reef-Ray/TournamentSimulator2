@@ -8,12 +8,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-
-<BorderPane fx:controller="controllers.SpectateTournamentViewController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SpectateTournamentViewController">
    <top>
       <HBox fx:id="topBar" prefHeight="48.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="backButton" onAction="#goBack" mnemonicParsing="false" prefHeight="49.0" prefWidth="85.0" text="Back">
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#goBack" prefHeight="49.0" prefWidth="85.0" text="Back">
                <font>
                   <Font size="14.0" />
                </font>
@@ -27,14 +26,27 @@
       </HBox>
    </top>
    <center>
-      <ScrollPane fx:id="messagesScroll" prefHeight="200.0" prefWidth="200.0" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
-             <children>
-                <Label fx:id="messagesLabel" layoutX="10.0" layoutY="10.0" prefWidth="560.0" wrapText="true" text="No messages yet." />
-             </children>
-          </AnchorPane>
-        </content>
-      </ScrollPane>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <ScrollPane fx:id="messagesScroll" prefHeight="352.0" prefWidth="432.0" vbarPolicy="ALWAYS">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="345.0" prefWidth="289.0">
+                   <children>
+                      <Label fx:id="messagesLabel" layoutX="10.0" layoutY="10.0" prefWidth="560.0" text="No messages yet." wrapText="true" />
+                   </children>
+                </AnchorPane>
+              </content>
+            </ScrollPane>
+            <ScrollPane fx:id="messagesScroll1" prefHeight="352.0" prefWidth="422.0" vbarPolicy="ALWAYS">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="350.0" prefWidth="278.0">
+                     <children>
+                        <Label fx:id="logLabel" layoutX="10.0" layoutY="10.0" prefWidth="560.0" text="No messages yet." wrapText="true" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </ScrollPane>
+         </children>
+      </HBox>
    </center>
 </BorderPane>

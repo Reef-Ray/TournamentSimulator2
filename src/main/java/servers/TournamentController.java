@@ -45,4 +45,10 @@ public class TournamentController {
     public java.util.List<String> observe(@RequestParam String name) {
         return service.getObserverMessages(name);
     }
+
+    @PostMapping("/run")
+    public String runTournament(@RequestParam String name) {
+        service.runTournament(name);
+        return "Tournament started";
+    }
 }

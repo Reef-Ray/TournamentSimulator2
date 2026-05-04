@@ -22,6 +22,12 @@ public class MockTournamentsLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        List<robots.Robot> players0 = new ArrayList<>();
+        players0.add(new DefectBot("D1"));
+        players0.add(new CooperateBot("C1"));
+        players0.add(new DefectBot("D2"));
+        server.addTournament("AlmostFull", new RoundRobinTournament("AlmostFull", players0, new PrisonersDilemmaGame(10), 4));
+
         for (int i = 1; i <= 15; i++) {
             String name = "OpenEmpty" + i;
             server.addTournament(name, new RoundRobinTournament(name, new ArrayList<>(), new PrisonersDilemmaGame(10), 4));

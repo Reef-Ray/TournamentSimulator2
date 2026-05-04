@@ -80,6 +80,13 @@ public class SpectateViewTests {
         WaitForAsyncUtils.waitForFxEvents();
         assertEquals("Alice chose Cooperate | Bob chose Defect", robot.lookup("#messagesLabel").queryAs(Label.class).getText());
     }
+
+    @Test
+    void testSetLogMessagesUpdatesLabel(FxRobot robot) {
+        robot.interact(() -> controller.setLogMessages("[12:00] Tournament started\n[12:01] Match 1 finished"));
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals("[12:00] Tournament started\n[12:01] Match 1 finished", robot.lookup("#logLabel").queryAs(Label.class).getText());
+    }
  
     @Test
     void testSetObserverMessagesNullShowsPlaceholder(FxRobot robot) {
@@ -93,6 +100,20 @@ public class SpectateViewTests {
         robot.interact(() -> controller.setObserverMessages("   "));
         WaitForAsyncUtils.waitForFxEvents();
         assertEquals("No messages yet.", robot.lookup("#messagesLabel").queryAs(Label.class).getText());
+    }
+
+    @Test
+    void testSetLogMessagesNullShowsPlaceholder(FxRobot robot) {
+        robot.interact(() -> controller.setLogMessages(null));
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals("No log entries yet.", robot.lookup("#logLabel").queryAs(Label.class).getText());
+    }
+
+    @Test
+    void testSetLogMessagesBlankShowsPlaceholder(FxRobot robot) {
+        robot.interact(() -> controller.setLogMessages("   "));
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals("No log entries yet.", robot.lookup("#logLabel").queryAs(Label.class).getText());
     }
   
     @Test

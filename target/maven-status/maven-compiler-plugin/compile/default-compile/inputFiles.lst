@@ -14,9 +14,12 @@ C:\Users\darre\Downloads\TournamentSimulator2\src\main\java\robots\CopyBot.java
 C:\Users\darre\Downloads\TournamentSimulator2\src\main\java\robots\DefectBot.java
 C:\Users\darre\Downloads\TournamentSimulator2\src\main\java\robots\History.java
 C:\Users\darre\Downloads\TournamentSimulator2\src\main\java\robots\HumanBot.java
+C:\Users\darre\Downloads\TournamentSimulator2\src\main\java\robots\LogEntry.java
+C:\Users\darre\Downloads\TournamentSimulator2\src\main\java\robots\LoggingBot.java
 C:\Users\darre\Downloads\TournamentSimulator2\src\main\java\robots\RandomBot.java
 C:\Users\darre\Downloads\TournamentSimulator2\src\main\java\robots\RemoteBot.java
 C:\Users\darre\Downloads\TournamentSimulator2\src\main\java\robots\Robot.java
+C:\Users\darre\Downloads\TournamentSimulator2\src\main\java\servers\LogController.java
 C:\Users\darre\Downloads\TournamentSimulator2\src\main\java\servers\MockTournamentsLoader.java
 C:\Users\darre\Downloads\TournamentSimulator2\src\main\java\servers\ServerApplicationApp.java
 C:\Users\darre\Downloads\TournamentSimulator2\src\main\java\servers\TournamentController.java

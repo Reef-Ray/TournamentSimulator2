@@ -11,6 +11,7 @@ public class ViewTransitionalModel implements ViewTransitionModelInterface {
 
 	private static ViewTransitionalModel instance;
 	private Stage primaryStage;
+	private String baseUrl;
 
 	private ViewTransitionalModel() {}
 
@@ -21,6 +22,14 @@ public class ViewTransitionalModel implements ViewTransitionModelInterface {
 
 	public void setPrimaryStage(Stage stage) {
 		this.primaryStage = stage;
+	}
+
+	public void setBaseUrl(String url) {
+		this.baseUrl = url;
+	}
+
+	public String getBaseUrl() {
+		return baseUrl == null || baseUrl.isBlank() ? "http://127.0.0.1:8080" : baseUrl;
 	}
 
 	@Override
