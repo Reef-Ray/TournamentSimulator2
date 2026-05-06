@@ -38,6 +38,9 @@ public class RegistrationViewController {
     private TextField playerNameField;
 
     @FXML
+    private TextField ipField;
+
+    @FXML
     private TextField portField;
 
     private String tournamentName;
@@ -95,10 +98,16 @@ public class RegistrationViewController {
     @FXML
     public void registerRemote(ActionEvent event) {
         String playerName = playerNameField.getText();
+        String ip = ipField.getText();
         String port = portField.getText();
 
         if (playerName == null || playerName.isBlank()) {
             System.err.println("Player name is required");
+            return;
+        }
+
+        if (ip == null || ip.isBlank()) {
+            System.err.println("IP address is required");
             return;
         }
 
@@ -115,7 +124,7 @@ public class RegistrationViewController {
                     + "?name=" + java.net.URLEncoder.encode(playerName, java.nio.charset.StandardCharsets.UTF_8)
                     + "&tournament=" + java.net.URLEncoder.encode(tournamentName, java.nio.charset.StandardCharsets.UTF_8)
                     + "&type=remote"
-                    + "&ip=localhost"
+                    + "&ip=" + java.net.URLEncoder.encode(ip, java.nio.charset.StandardCharsets.UTF_8)
                     + "&port=" + port;
 
             String result = rest.postForObject(url, null, String.class);

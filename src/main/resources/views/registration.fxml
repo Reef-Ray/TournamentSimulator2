@@ -35,6 +35,12 @@
                </font>
             </Label>
             <TextField fx:id="playerNameField" promptText="Enter player name" prefWidth="300.0" />
+            <Label text="IP Address (for Remote Bot):">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="ipField" promptText="e.g. localhost or 192.168.1.100" prefWidth="300.0" />
             <Label text="Port (for Remote Bot):">
                <font>
                   <Font size="14.0" />
