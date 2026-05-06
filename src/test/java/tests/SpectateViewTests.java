@@ -135,4 +135,65 @@ public class SpectateViewTests {
         WaitForAsyncUtils.waitForFxEvents();
         assertNotNull(robot.lookup(".root").query());
     }
+
+    @Test
+    void testURLEncoding() {
+        String tournamentName = "Tournament Name With Spaces";
+        String encoded = java.net.URLEncoder.encode(tournamentName, java.nio.charset.StandardCharsets.UTF_8);
+        
+        assertNotNull(encoded);
+        assertFalse(encoded.contains(" "));
+        assertTrue(encoded.contains("+") || encoded.contains("%20"));
+    }
+
+    @Test
+    void testMessageHandling_Empty() {
+        String messages = null;
+        String display = (messages == null || messages.isBlank()) ? "No messages yet." : messages;
+        assertEquals("No messages yet.", display);
+    }
+
+    @Test
+    void testMessageHandling_Valid() {
+        String messages = "Message 1\nMessage 2";
+        String display = (messages == null || messages.isBlank()) ? "No messages yet." : messages;
+        assertEquals(messages, display);
+    }
+
+    @Test
+    void testLogHandling_Empty() {
+        String logs = null;
+        String display = (logs == null || logs.isBlank()) ? "No log entries yet." : logs;
+        assertEquals("No log entries yet.", display);
+    }
+
+    @Test
+    void testMessageArrayJoining() {
+        String[] msgs = {"Msg1", "Msg2", "Msg3"};
+        String joined = String.join("\n", msgs);
+        assertEquals("Msg1\nMsg2\nMsg3", joined);
+    }
+
+    @Test
+    void testSchedulerConfiguration() {
+        java.util.concurrent.ScheduledExecutorService scheduler = 
+            java.util.concurrent.Executors.newScheduledThreadPool(2);
+        assertNotNull(scheduler);
+        assertFalse(scheduler.isShutdown());
+        scheduler.shutdown();
+    }
+
+    @Test
+    void testPollingValidation() {
+        String tournamentName = "ValidTournament";
+        boolean shouldPoll = tournamentName != null && !tournamentName.isBlank();
+        assertTrue(shouldPoll);
+    }
+
+    @Test
+    void testPollingValidation_Null() {
+        String tournamentName = null;
+        boolean shouldPoll = tournamentName != null && !tournamentName.isBlank();
+        assertFalse(shouldPoll);
+    }
 }

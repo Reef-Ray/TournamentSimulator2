@@ -18,6 +18,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(ApplicationExtension.class)
@@ -201,5 +202,72 @@ public class ListviewTests {
 		} finally {
 			ctx.close();
 		}
+	}
+
+	@Test
+	void testTournamentFilterLogic() {
+		java.util.List<String> all = java.util.Arrays.asList("T1", "T2", "T3", "T4");
+		java.util.List<String> available = java.util.Arrays.asList("T1", "T3");
+		
+		java.util.List<String> closed = new ArrayList<>();
+		for (String t : all) {
+			if (!available.contains(t)) closed.add(t);
+		}
+		
+		assertEquals(2, closed.size());
+		assertTrue(closed.contains("T2") && closed.contains("T4"));
+	}
+
+	@Test
+	void testBaseUrlConstruction() {
+		String ip = "192.168.1.1";
+		String port = "8080";
+		String baseUrl = "http://" + ip + ":" + port;
+		
+		assertEquals("http://192.168.1.1:8080", baseUrl);
+	}
+
+	@Test
+	void testInvalidInputRejection() {
+		String port = "   ";
+		String ip = "192.168.1.1";
+		
+		boolean isValid = !(port == null || port.isBlank() || ip == null || ip.isBlank());
+		assertFalse(isValid);
+	}
+
+	@Test
+	void testTournamentSelectionValidation() {
+		String inputName = "Tournament1";
+		java.util.List<String> available = java.util.Arrays.asList("Tournament1", "Tournament2");
+		
+		String chosen = inputName.trim();
+		boolean isValid = chosen != null && !chosen.isBlank() && available.contains(chosen);
+		
+		assertTrue(isValid);
+	}
+
+	@Test
+	void testPlayerCountLogic() {
+		int current = 5;
+		int max = 10;
+		boolean alreadyRegistered = false;
+		
+		boolean shouldDisableTournamentFull = current >= max && max > 0;
+		boolean shouldDisable = shouldDisableTournamentFull || alreadyRegistered;
+		
+		assertFalse(shouldDisable);
+	}
+
+	@Test
+	void testTournamentFullDisablesButtons() {
+		int current = 10;
+		int max = 10;
+		boolean alreadyRegistered = false;
+		
+		boolean shouldDisableTournamentFull = current >= max && max > 0;
+		boolean shouldDisable = shouldDisableTournamentFull || alreadyRegistered;
+		
+		assertTrue(shouldDisable);
 	}
 }

@@ -121,21 +121,14 @@ public class RegistrationViewController {
             String result = rest.postForObject(url, null, String.class);
             System.out.println("Registration result: " + result);
 
-            // Mark this client as having registered a player
             registeredPlayerName = playerName;
 
-            // Disable both buttons to prevent double registration
             humanBotButton.setDisable(true);
             remoteBotButton.setDisable(true);
 
-            // Refresh counts immediately
             refreshCounts();
-
-            // Check if tournament is now full and should start
             if (currentCount >= maxCount && maxCount > 0) {
-                // Start the tournament
                 startTournament();
-                // Navigate to spectate view
                 Platform.runLater(() -> {
                     scheduler.shutdownNow();
                     viewModel.showSpectateView(tournamentName);

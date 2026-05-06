@@ -244,4 +244,80 @@ public class ServerTests {
         assertEquals(3, result.get("current"));
         assertEquals(5, result.get("max"));
     }
+
+    @Test
+    void testLogController_ReturnsEmptyWhenTournamentNotFound() {
+        TournamentServer server = new TournamentServer();
+        LogController controller = new LogController(server);
+        
+        List<String> result = controller.getLog("NonExistent");
+        
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testLogController_ReturnsLogsFromLoggingBots() {
+        TournamentServer server = new TournamentServer();
+        
+        Robot original = new DefectBot("LoggedBot");
+        LoggingBot logged = new LoggingBot(original);
+        logged.getAction("Opponent1");
+        logged.getAction("Opponent2");
+        
+        List<Robot> players = new ArrayList<>();
+        players.add(logged);
+        Tournament t = new RoundRobinTournament("TestTournament", players, 
+                new PrisonersDilemmaGame(1), 1);
+        server.addTournament("TestTournament", t);
+        
+        LogController controller = new LogController(server);
+        List<String> result = controller.getLog("TestTournament");
+        
+        assertEquals(2, result.size());
+        assertTrue(result.get(0).contains("LoggedBot"));
+        assertTrue(result.get(0).contains("Opponent1"));
+    }
+
+    @Test
+    void testLogController_HandlesNoLoggingBots() {
+        TournamentServer server = new TournamentServer();
+        
+        List<Robot> players = new ArrayList<>();
+        players.add(new DefectBot("RegularBot"));
+        Tournament t = new RoundRobinTournament("TestTournament", players, 
+                new PrisonersDilemmaGame(1), 1);
+        server.addTournament("TestTournament", t);
+        
+        LogController controller = new LogController(server);
+        List<String> result = controller.getLog("TestTournament");
+        
+        assertTrue(result.contains("No log entries yet."));
+    }
+
+    @Test
+    void testLogController_PreservesLogOrder() {
+        TournamentServer server = new TournamentServer();
+        
+        Robot original = new CooperateBot("Bot");
+        LoggingBot logged = new LoggingBot(original);
+        
+        logged.getAction("First");
+        logged.getAction("Second");
+        logged.getAction("Third");
+        
+        List<Robot> players = new ArrayList<>();
+        players.add(logged);
+        Tournament t = new RoundRobinTournament("TestTournament", players, 
+                new PrisonersDilemmaGame(1), 1);
+        server.addTournament("TestTournament", t);
+        
+        LogController controller = new LogController(server);
+        List<String> result = controller.getLog("TestTournament");
+        
+        assertEquals(3, result.size());
+        assertTrue(result.get(0).contains("First"));
+        assertTrue(result.get(1).contains("Second"));
+        assertTrue(result.get(2).contains("Third"));
+    }
 }
