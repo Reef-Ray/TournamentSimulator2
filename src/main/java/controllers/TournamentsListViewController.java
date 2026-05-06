@@ -122,7 +122,9 @@ public class TournamentsListViewController {
                 return;
             }
 
-            viewModel.showSpectateView(chosen);
+            final String url = baseUrl == null || baseUrl.isBlank() ? "http://127.0.0.1:8080" : baseUrl;
+            viewModel.setBaseUrl(url);
+            viewModel.showRegistrationView(chosen);
         } catch (Exception e) {
             System.err.println("Failed to open spectate view: " + e.getMessage());
         }

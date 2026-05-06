@@ -111,7 +111,7 @@ public class ClientTests {
         bot.addHistory(new History("Jeff", "Opponent", "Cooperate", "Defect", new int[]{0, 5}));
         String result = bot.getAction("Opponent");
 
-        assertTrue(result.equals("Cooperate") || result.equals("Defect")); 
+        assertTrue(result.equals("Defect")); 
     }
 
     @Test
