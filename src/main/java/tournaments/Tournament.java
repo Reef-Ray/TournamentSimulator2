@@ -33,6 +33,13 @@ public abstract class Tournament {
 
         for (Robot[] pair : matches) {
             game.run(pair[0], pair[1]);
+            
+            // Add delay between matches so they don't complete simultaneously
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                System.err.println("Match delay interrupted: " + e.getMessage());
+            }
         }
 
         finished = true;

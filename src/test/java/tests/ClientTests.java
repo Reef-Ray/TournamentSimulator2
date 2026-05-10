@@ -76,12 +76,12 @@ public class ClientTests {
     @Test
     void clientApp_ReceivesRemoteInfoAndReturnsAction() {
         ClientApp app = new ClientApp();
-        RemoteInfo info = new RemoteInfo("Opponent", new ArrayList<>());
+        RemoteInfo info = new RemoteInfo("Opponent", new ArrayList<>(), new ArrayList<>());
         
-        String action = app.getAction(info);
+        RemoteInfo response = app.getAction(info);
         
-        assertNotNull(action);
-        assertTrue(action.equals("Cooperate") || action.equals("Defect"));
+        assertNotNull(response);
+        assertTrue(response.opponentName().equals("Cooperate") || response.opponentName().equals("Defect"));
     }
 
     @SpringBootApplication(scanBasePackages = {

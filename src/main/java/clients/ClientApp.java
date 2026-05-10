@@ -14,12 +14,13 @@ import templates.RemoteInfo;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 
 @SpringBootApplication
 @RestController
 public class ClientApp extends SpringBootServletInitializer {
 
-    private Robot bot = new DefectBot("ClientBot");
+    private Robot bot = new LoggingBot(new DefectBot("ClientBot")); //change this to change remote bot type
     private int assignedPort;
     private String assignedIP = "localhost";
 
@@ -46,7 +47,15 @@ public class ClientApp extends SpringBootServletInitializer {
 
     @PostMapping("/action")
     @ResponseStatus(HttpStatus.OK)
-    public String getAction(@RequestBody RemoteInfo details) {
-        return this.bot.getAction(details.opponentName());
+    public RemoteInfo getAction(@RequestBody RemoteInfo details) {
+        String action = this.bot.getAction(details.opponentName());
+        List<LogEntry> logs = new java.util.ArrayList<>();
+        
+        // Extract logs if this is a LoggingBot
+        if (this.bot instanceof LoggingBot) {
+            logs.addAll(((LoggingBot) this.bot).getLog());
+        }
+        
+        return new RemoteInfo(action, this.bot.getHistory(), logs);
     }
 }

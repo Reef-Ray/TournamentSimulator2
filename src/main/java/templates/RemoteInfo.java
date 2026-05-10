@@ -3,4 +3,4 @@ package templates;
 import java.util.List;
 import robots.*;
 
-public record RemoteInfo(String opponentName, List<History> history) {}
+public record RemoteInfo(String opponentName, List<History> history, List<LogEntry> logEntries) {}

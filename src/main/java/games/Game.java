@@ -62,7 +62,7 @@ public abstract class Game {
 
             // Add 3 second delay between rounds
             try {
-                Thread.sleep(1000);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 System.err.println("Tournament round delay interrupted: " + e.getMessage());
             }

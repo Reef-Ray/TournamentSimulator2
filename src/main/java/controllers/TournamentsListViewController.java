@@ -46,9 +46,16 @@ public class TournamentsListViewController {
     private final ViewTransitionalModel viewModel = ViewTransitionalModel.getInstance();
 
     @FXML
+    public void initialize() {
+        serverIpField.textProperty().bindBidirectional(viewModel.serverIpProperty());
+        serverPortField.textProperty().bindBidirectional(viewModel.serverPortProperty());
+    }
+
+    @FXML
     public void connectToServer(ActionEvent event) {
         String port = serverPortField.getText();
         String ip = serverIpField.getText();
+    
         if (port == null || port.isBlank() || ip == null || ip.isBlank()) {
             return; // nothing to do
         }
@@ -124,7 +131,7 @@ public class TournamentsListViewController {
 
             final String url = baseUrl == null || baseUrl.isBlank() ? "http://127.0.0.1:8080" : baseUrl;
             viewModel.setBaseUrl(url);
-            viewModel.showRegistrationView(chosen);
+            viewModel.showSpectateView(chosen);
         } catch (Exception e) {
             System.err.println("Failed to open spectate view: " + e.getMessage());
         }

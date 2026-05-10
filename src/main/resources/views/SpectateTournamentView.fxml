@@ -28,20 +28,20 @@
    <center>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <ScrollPane fx:id="messagesScroll" prefHeight="352.0" prefWidth="432.0" vbarPolicy="ALWAYS">
+            <ScrollPane fx:id="messagesScroll" prefHeight="352.0" prefWidth="432.0" vbarPolicy="ALWAYS" hbarPolicy="NEVER" fitToWidth="true">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="345.0" prefWidth="289.0">
                    <children>
-                      <Label fx:id="messagesLabel" layoutX="10.0" layoutY="10.0" prefWidth="560.0" text="No messages yet." wrapText="true" />
+                      <Label fx:id="messagesLabel" layoutX="10.0" layoutY="10.0" prefWidth="400.0" text="No messages yet." wrapText="true" />
                    </children>
                 </AnchorPane>
               </content>
             </ScrollPane>
-            <ScrollPane fx:id="messagesScroll1" prefHeight="352.0" prefWidth="422.0" vbarPolicy="ALWAYS">
+            <ScrollPane fx:id="messagesScroll1" prefHeight="352.0" prefWidth="422.0" vbarPolicy="ALWAYS" hbarPolicy="NEVER" fitToWidth="true">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="350.0" prefWidth="278.0">
                      <children>
-                        <Label fx:id="logLabel" layoutX="10.0" layoutY="10.0" prefWidth="560.0" text="No messages yet." wrapText="true" />
+                        <Label fx:id="logLabel" layoutX="10.0" layoutY="10.0" prefWidth="400.0" text="No messages yet." wrapText="true" />
                      </children>
                   </AnchorPane>
                </content>

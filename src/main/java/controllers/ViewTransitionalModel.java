@@ -2,6 +2,8 @@ package controllers;
 
 import java.io.IOException;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -12,6 +14,8 @@ public class ViewTransitionalModel implements ViewTransitionModelInterface {
 	private static ViewTransitionalModel instance;
 	private Stage primaryStage;
 	private String baseUrl;
+	private final StringProperty serverIp = new SimpleStringProperty("");
+	private final StringProperty serverPort = new SimpleStringProperty("");
 
 	private ViewTransitionalModel() {}
 
@@ -30,6 +34,30 @@ public class ViewTransitionalModel implements ViewTransitionModelInterface {
 
 	public String getBaseUrl() {
 		return baseUrl == null || baseUrl.isBlank() ? "http://127.0.0.1:8080" : baseUrl;
+	}
+
+	public StringProperty serverIpProperty() {
+		return serverIp;
+	}
+
+	public String getServerIp() {
+		return serverIp.get();
+	}
+
+	public void setServerIp(String ip) {
+		serverIp.set(ip);
+	}
+
+	public StringProperty serverPortProperty() {
+		return serverPort;
+	}
+
+	public String getServerPort() {
+		return serverPort.get();
+	}
+
+	public void setServerPort(String port) {
+		serverPort.set(port);
 	}
 
 	@Override
