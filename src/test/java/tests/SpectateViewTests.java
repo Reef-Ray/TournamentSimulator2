@@ -196,4 +196,78 @@ public class SpectateViewTests {
         boolean shouldPoll = tournamentName != null && !tournamentName.isBlank();
         assertFalse(shouldPoll);
     }
+
+    @Test
+    void testViewTransitionalModelSetGetBaseUrl() {
+        model.setBaseUrl("http://10.0.0.1:9090");
+        assertEquals("http://10.0.0.1:9090", model.getBaseUrl());
+    }
+
+    @Test
+    void testViewTransitionalModelGetBaseUrlDefaultWhenNull() {
+        model.setBaseUrl(null);
+        assertEquals("http://127.0.0.1:8080", model.getBaseUrl());
+    }
+
+    @Test
+    void testViewTransitionalModelGetBaseUrlDefaultWhenBlank() {
+        model.setBaseUrl("  ");
+        assertEquals("http://127.0.0.1:8080", model.getBaseUrl());
+    }
+
+    @Test
+    void testViewTransitionalModelSetGetServerIp() {
+        model.setServerIp("192.168.0.1");
+        assertEquals("192.168.0.1", model.getServerIp());
+    }
+
+    @Test
+    void testViewTransitionalModelSetGetServerPort() {
+        model.setServerPort("9999");
+        assertEquals("9999", model.getServerPort());
+    }
+
+    @Test
+    void testViewTransitionalModelServerIpPropertyNotNull() {
+        assertNotNull(model.serverIpProperty());
+    }
+
+    @Test
+    void testViewTransitionalModelServerPortPropertyNotNull() {
+        assertNotNull(model.serverPortProperty());
+    }
+
+    @Test
+    void testStartPollingFiresAndHandlesFailure(FxRobot robot) throws Exception {
+        model.setBaseUrl("http://127.0.0.1:1");
+        try {
+            robot.interact(() -> controller.setTournamentName("PollTest"));
+            Thread.sleep(800);
+            WaitForAsyncUtils.waitForFxEvents();
+            String msg = robot.lookup("#messagesLabel").queryAs(Label.class).getText();
+            assertTrue(msg.startsWith("Failed to fetch observer messages:"));
+        } finally {
+            model.setBaseUrl(null);
+        }
+    }
+
+    @Test
+    void testStartPollingWithLiveServer(FxRobot robot) throws Exception {
+        org.springframework.context.ConfigurableApplicationContext ctx =
+            org.springframework.boot.SpringApplication.run(servers.ServerApplicationApp.class,
+                "--server.port=0", "--spring.main.lazy-initialization=true");
+        int port = ctx.getEnvironment().getProperty("local.server.port", Integer.class);
+        try {
+            model.setBaseUrl("http://localhost:" + port);
+            robot.interact(() -> controller.setTournamentName("AlmostFull"));
+            Thread.sleep(800);
+            WaitForAsyncUtils.waitForFxEvents();
+            String msg = robot.lookup("#messagesLabel").queryAs(Label.class).getText();
+            assertNotNull(msg);
+            assertFalse(msg.startsWith("Failed to fetch observer messages:"));
+        } finally {
+            ctx.close();
+            model.setBaseUrl(null);
+        }
+    }
 }

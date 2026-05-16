@@ -248,6 +248,44 @@ public class ListviewTests {
 	}
 
 	@Test
+	void testConnectToServerInvalidServerHandlesErrorGracefully(FxRobot robot) {
+		setIP(robot, "localhost");
+		setPort(robot, "1");
+		assertDoesNotThrow(() -> {
+			robot.interact(() -> controller.connectToServer(new javafx.event.ActionEvent()));
+			WaitForAsyncUtils.waitForFxEvents();
+		});
+		setIP(robot, "");
+		setPort(robot, "");
+	}
+
+	@Test
+	void testOpenRegistrationViewWithValidSelection(FxRobot robot) {
+		robot.interact(() -> {
+			openList(robot).setItems(javafx.collections.FXCollections.observableArrayList("T1", "T2"));
+			openList(robot).getSelectionModel().select(0);
+		});
+		WaitForAsyncUtils.waitForFxEvents();
+		assertDoesNotThrow(() -> {
+			robot.interact(() -> controller.openRegistrationView(new javafx.event.ActionEvent()));
+			WaitForAsyncUtils.waitForFxEvents();
+		});
+	}
+
+	@Test
+	void testOpenSpectateViewWithValidSelection(FxRobot robot) {
+		robot.interact(() -> {
+			closedList(robot).setItems(javafx.collections.FXCollections.observableArrayList("T3", "T4"));
+			closedList(robot).getSelectionModel().select(0);
+		});
+		WaitForAsyncUtils.waitForFxEvents();
+		assertDoesNotThrow(() -> {
+			robot.interact(() -> controller.openSpectateView(new javafx.event.ActionEvent()));
+			WaitForAsyncUtils.waitForFxEvents();
+		});
+	}
+
+	@Test
 	void testPlayerCountLogic() {
 		int current = 5;
 		int max = 10;

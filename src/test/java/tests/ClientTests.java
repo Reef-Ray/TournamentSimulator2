@@ -36,12 +36,12 @@ public class ClientTests {
     private TournamentServer server;
 
     @Test
-    void clientApp_StartsWithoutError() {
+    void clientAppStartsWithoutError() {
         assertDoesNotThrow(() -> ClientApp.main(new String[]{}));
     }
 
     @Test
-    void tournamentClient_DiscoveryReturnsValidPort() {
+    void tournamentClientDiscoveryReturnsValidPort() {
         TournamentClient client = new TournamentClient(env);
         
         assertNotEquals(0, client.getPort());
@@ -49,7 +49,7 @@ public class ClientTests {
     }
 
     @Test
-    void tournamentClient_DiscoveryReturnsValidIP() {
+    void tournamentClientDiscoveryReturnsValidIP() {
         TournamentClient client = new TournamentClient(env);
         
         assertNotNull(client.getIP());
@@ -57,7 +57,7 @@ public class ClientTests {
     }
 
     @Test
-    void tournamentServer_ListsAvailableTournamentsViaEndpoint() {
+    void tournamentServerListsAvailableTournamentsViaEndpoint() {
         List<String> available = server.getAvailableTournaments();
         
         assertNotNull(available);
@@ -65,7 +65,7 @@ public class ClientTests {
     }
 
     @Test
-    void tournamentServer_AcceptsRegistrationViaEndpoint() {
+    void tournamentServerAcceptsRegistrationViaEndpoint() {
         String result = server.register("ClientBot", "T1", "remote", "localhost", "8080");
         
         assertEquals("Registered", result);
@@ -74,7 +74,7 @@ public class ClientTests {
     }
 
     @Test
-    void clientApp_ReceivesRemoteInfoAndReturnsAction() {
+    void clientAppReceivesRemoteInfoAndReturnsAction() {
         ClientApp app = new ClientApp();
         RemoteInfo info = new RemoteInfo("Opponent", new ArrayList<>(), new ArrayList<>());
         
@@ -106,7 +106,7 @@ public class ClientTests {
     }
 
     @Test
-    void testRemoteBot_success() {
+    void testRemoteBotSuccess() {
         Robot bot = new RemoteBot("Jeff", "localhost", String.valueOf(port));
         bot.addHistory(new History("Jeff", "Opponent", "Cooperate", "Defect", new int[]{0, 5}));
         String result = bot.getAction("Opponent");
@@ -115,7 +115,14 @@ public class ClientTests {
     }
 
     @Test
-    void testRemoteBot_failure() {
+    void tournamentClientRegisterCallsServer() {
+        TournamentClient client = new TournamentClient(env);
+        String serverUrl = "http://localhost:" + port;
+        assertDoesNotThrow(() -> client.register(serverUrl, "TestRegisterBot", "T1", "remote"));
+    }
+
+    @Test
+    void testRemoteBotFailure() {
         RemoteBot bot = new RemoteBot("BadBot", "256.256.256.256", "9999");
 
         String result = bot.getAction("Opponent");

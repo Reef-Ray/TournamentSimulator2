@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,7 +27,7 @@ public class ServerTests {
     }
 
     @Test
-    void tournamentServer_ListsAvailableTournaments() {
+    void tournamentServerListsAvailableTournaments() {
         TournamentServer server = new TournamentServer();
         List<Robot> players = new ArrayList<>();
         Tournament t = new RoundRobinTournament("Open", players, 
@@ -70,7 +71,7 @@ public class ServerTests {
     }
 
     @Test
-    void tournamentServer_RegistersRemoteBotSuccessfully() {
+    void tournamentServerRegistersRemoteBotSuccessfully() {
         TournamentServer server = new TournamentServer();
         List<Robot> players = new ArrayList<>();
         Tournament t = new RoundRobinTournament("Remote", players, 
@@ -84,7 +85,7 @@ public class ServerTests {
     }
 
     @Test
-    void tournamentServer_RegistersHumanBotSuccessfully() {
+    void tournamentServerRegistersHumanBotSuccessfully() {
         TournamentServer server = new TournamentServer();
         List<Robot> players = new ArrayList<>();
         Tournament t = new RoundRobinTournament("Human", players, 
@@ -98,7 +99,7 @@ public class ServerTests {
     }
 
     @Test
-    void tournamentServer_RegistersDefaultBotWhenTypeUnknown() {
+    void tournamentServerRegistersDefaultBotWhenTypeUnknown() {
         TournamentServer server = new TournamentServer();
         List<Robot> players = new ArrayList<>();
         Tournament t = new RoundRobinTournament("Default", players, 
@@ -112,7 +113,7 @@ public class ServerTests {
     }
 
     @Test
-    void tournamentServer_RejectsRegistrationWhenTournamentClosed() {
+    void tournamentServerRejectsRegistrationWhenTournamentClosed() {
         TournamentServer server = new TournamentServer();
         List<Robot> players = new ArrayList<>();
         players.add(new DefectBot("A"));
@@ -127,7 +128,7 @@ public class ServerTests {
     }
 
     @Test
-    void tournamentServer_RejectsRegistrationForNonExistentTournament() {
+    void tournamentServerRejectsRegistrationForNonExistentTournament() {
         TournamentServer server = new TournamentServer();
         
         String result = server.register("LostPlayer", "NonExistent", "remote", "127.0.0.1", "8082");
@@ -151,7 +152,7 @@ public class ServerTests {
     }
 
     @Test
-    void remoteBot_HistoryIsAccessible() {
+    void remoteBotHistoryIsAccessible() {
         RemoteBot bot = new RemoteBot("TestBot", "127.0.0.1", "8080");
         
         assertNotNull(bot.getHistory());
@@ -173,7 +174,7 @@ public class ServerTests {
     }
 
      @Test
-    void testRunTournament_runsWhenValid() {
+    void testRunTournamentrunsWhenValid() throws InterruptedException {
         TournamentServer server = new TournamentServer();
 
         Tournament t = mock(Tournament.class);
@@ -183,6 +184,7 @@ public class ServerTests {
 
         server.runTournament("T1");
 
+        Thread.sleep(300);
         verify(t, times(1)).run();
     }
 
@@ -246,7 +248,7 @@ public class ServerTests {
     }
 
     @Test
-    void testLogController_ReturnsEmptyWhenTournamentNotFound() {
+    void testLogControllerReturnsEmptyWhenTournamentNotFound() {
         TournamentServer server = new TournamentServer();
         LogController controller = new LogController(server);
         
@@ -257,7 +259,7 @@ public class ServerTests {
     }
 
     @Test
-    void testLogController_ReturnsLogsFromLoggingBots() {
+    void testLogControllerReturnsLogsFromLoggingBots() {
         TournamentServer server = new TournamentServer();
         
         Robot original = new DefectBot("LoggedBot");
@@ -280,7 +282,7 @@ public class ServerTests {
     }
 
     @Test
-    void testLogController_HandlesNoLoggingBots() {
+    void testLogControllerHandlesNoLoggingBots() {
         TournamentServer server = new TournamentServer();
         
         List<Robot> players = new ArrayList<>();
@@ -296,7 +298,74 @@ public class ServerTests {
     }
 
     @Test
-    void testLogController_PreservesLogOrder() {
+    void testTournamentControllerObserve() {
+        TournamentServer service = mock(TournamentServer.class);
+        when(service.getObserverMessages("T1")).thenReturn(List.of("move line", "score line"));
+        TournamentController controller = new TournamentController(service);
+
+        List<String> result = controller.observe("T1");
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains("move line"));
+    }
+
+    @Test
+    void testTournamentControllerRunTournament() {
+        TournamentServer service = mock(TournamentServer.class);
+        TournamentController controller = new TournamentController(service);
+
+        String result = controller.runTournament("T1");
+
+        assertEquals("Tournament started", result);
+        verify(service, times(1)).runTournament("T1");
+    }
+
+    @Test
+    void testRemoteBotGetRemoteLogsInitiallyEmpty() {
+        RemoteBot bot = new RemoteBot("Bot", "127.0.0.1", "8080");
+        assertNotNull(bot.getRemoteLogs());
+        assertTrue(bot.getRemoteLogs().isEmpty());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testLogControllerRemoteBotWithLogs() throws Exception {
+        TournamentServer server = new TournamentServer();
+        RemoteBot remoteBot = new RemoteBot("RemotePlayer", "127.0.0.1", "8080");
+
+        java.lang.reflect.Field logsField = RemoteBot.class.getDeclaredField("remoteLogs");
+        logsField.setAccessible(true);
+        List<LogEntry> logs = (List<LogEntry>) logsField.get(remoteBot);
+        logs.add(new LogEntry("RemotePlayer", "Opponent", "Cooperate"));
+
+        List<Robot> players = new ArrayList<>();
+        players.add(remoteBot);
+        Tournament t = new RoundRobinTournament("T1", players, new PrisonersDilemmaGame(1), 1);
+        server.addTournament("T1", t);
+
+        LogController controller = new LogController(server);
+        List<String> result = controller.getLog("T1");
+
+        assertEquals(1, result.size());
+        assertTrue(result.get(0).contains("RemotePlayer"));
+    }
+
+    @Test
+    void testRunTournamentHandlesExceptionGracefully() throws InterruptedException {
+        TournamentServer server = new TournamentServer();
+        Tournament t = mock(Tournament.class);
+        when(t.checkEnd()).thenReturn(false);
+        doThrow(new RuntimeException("simulated failure")).when(t).run();
+
+        server.addTournament("T1", t);
+        server.runTournament("T1");
+
+        Thread.sleep(300);
+        verify(t, times(1)).run();
+    }
+
+    @Test
+    void testLogControllerPreservesLogOrder() {
         TournamentServer server = new TournamentServer();
         
         Robot original = new CooperateBot("Bot");

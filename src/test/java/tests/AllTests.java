@@ -91,14 +91,14 @@ public class AllTests {
     }
 
     @Test
-    void testCopyBot_CopiesMostRecentEnemyMove() {
+    void testCopyBotCopiesMostRecentEnemyMove() {
         CopyBot c = new CopyBot("CopyBot");
         c.addHistory(new History("Enemy", "CopyBot", "Defect", "Cooperate", new int[]{5, 0}));
         assertEquals("Defect", c.getAction("Enemy"));
     }
 
     @Test
-    void testRobot_Scoring_AccumulatesCorrectly() {
+    void testRobotScoring_AccumulatesCorrectly() {
         Robot r = new CopyBot("TestBot");
         assertEquals(0, r.getScore());
         r.addHistory(new History("TestBot", "A", "Cooperate", "Cooperate", new int[]{3, 3}));
@@ -108,7 +108,7 @@ public class AllTests {
     }
 
     @Test
-    void testRobot_BasicProperties() {
+    void testRobotBasicProperties() {
         Robot r = new DefectBot("MyBot");
         assertEquals("MyBot", r.getName());
         assertNotNull(r.getHistory());
@@ -116,7 +116,7 @@ public class AllTests {
     }
 
     @Test
-    void tournament_BracketGeneration_MatchesCombinatorics() {
+    void tournamentBracketGenerationMatchesCombinatorics() {
         List<Robot> players = Arrays.asList(
                 new DefectBot("A"),
                 new CopyBot("B"),
@@ -144,7 +144,7 @@ public class AllTests {
     }
 
     @Test
-    void testMoveListener_PrintsCorrectly() {
+    void testMoveListenerPrintsCorrectly() {
         MoveListener listener = new MoveListener();
         listener.updateMove("Alice", "Cooperate", "Bob", "Defect");
         String output = capturedOutput.toString();
@@ -152,7 +152,7 @@ public class AllTests {
     }
 
     @Test
-    void testScoreListener_PrintsCorrectly() {
+    void testScoreListenerPrintsCorrectly() {
         ScoreListener listener = new ScoreListener();
         listener.updateScore("Alice", 5, "Bob", 3);
         String output = capturedOutput.toString();
@@ -160,7 +160,7 @@ public class AllTests {
     }
 
     @Test
-    void testLoggingBot_LogsActions() {
+    void testLoggingBotLogsActions() {
         Robot original = new CooperateBot("TestBot");
         LoggingBot logged = new LoggingBot(original);
         
@@ -173,7 +173,7 @@ public class AllTests {
     }
 
     @Test
-    void testLoggingBot_PreservesScore() {
+    void testLoggingBotPreservesScore() {
         Robot original = new DefectBot("DefectBot");
         original.addHistory(new History("DefectBot", "Enemy", "Defect", "Cooperate", new int[]{5, 0}));
         LoggingBot logged = new LoggingBot(original);
@@ -183,7 +183,7 @@ public class AllTests {
     }
 
     @Test
-    void testLoggingBot_CanAddHistory() {
+    void testLoggingBotCanAddHistory() {
         Robot original = new RandomBot("RandomBot");
         LoggingBot logged = new LoggingBot(original);
         
@@ -192,7 +192,7 @@ public class AllTests {
     }
 
     @Test
-    void testGame_AddRemoveAndNotifyMoveListeners() {
+    void testGameAddRemoveAndNotifyMoveListeners() {
         PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
         MoveListener listener1 = new MoveListener();
         MoveListener listener2 = new MoveListener();
@@ -219,7 +219,7 @@ public class AllTests {
     }
 
     @Test
-    void testGame_AddRemoveAndNotifyScoreListeners() {
+    void testGameAddRemoveAndNotifyScoreListeners() {
         PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
         ScoreListener listener1 = new ScoreListener();
         ScoreListener listener2 = new ScoreListener();
@@ -246,7 +246,72 @@ public class AllTests {
     }
 
     @Test
-    void testTournament_AddPlayerWhenOpenAndClosed() {
+    void testCopyBotCopiesEnemyMoveWhenEnemyIsPlayer2() {
+        CopyBot c = new CopyBot("CopyBot");
+        c.addHistory(new History("CopyBot", "Enemy", "Cooperate", "Defect", new int[]{0, 5}));
+        assertEquals("Defect", c.getAction("Enemy"));
+    }
+
+    @Test
+    void testRobotAddToHistory() {
+        Robot r = new CooperateBot("Bot");
+        r.addToHistory("Cooperate");
+        assertEquals(1, r.getHistory().size());
+        assertEquals("Bot", r.getHistory().get(0).player1);
+    }
+
+    @Test
+    void testRobotScoringAsPlayer2() {
+        Robot r = new CooperateBot("Bot");
+        r.addHistory(new History("Opponent", "Bot", "Defect", "Cooperate", new int[]{5, 0}));
+        assertEquals(0, r.getScore());
+        r.addHistory(new History("Other", "Bot", "Cooperate", "Cooperate", new int[]{3, 3}));
+        assertEquals(3, r.getScore());
+    }
+
+    @Test
+    void testTournamentMainMethodSortsPlayers() {
+        List<Robot> players = new ArrayList<>();
+        players.add(new CooperateBot("Cooperator"));
+        players.add(new DefectBot("Defector"));
+        RoundRobinTournament t = new RoundRobinTournament("Test", players, new PrisonersDilemmaGame(1), 0);
+        Robot[] ranked = t.main();
+        assertEquals(2, ranked.length);
+        assertEquals("Defector", ranked[0].getName());
+        assertEquals("Cooperator", ranked[1].getName());
+    }
+
+    @Test
+    void testRoundRobinTournamentIsOpenWhenEndConditionZero() {
+        List<Robot> players = new ArrayList<>();
+        players.add(new DefectBot("A"));
+        players.add(new DefectBot("B"));
+        RoundRobinTournament t = new RoundRobinTournament("Local", players, new PrisonersDilemmaGame(1), 0);
+        assertTrue(t.isOpen());
+    }
+
+    @Test
+    void testPrisonersDilemmaValidMove1InvalidMove2() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
+        StaticRobot r1 = new StaticRobot("A", "Cooperate");
+        StaticRobot r2 = new StaticRobot("B", "Invalid");
+        game.run(r1, r2);
+        assertEquals(5, r1.getScore());
+        assertEquals(0, r2.getScore());
+    }
+
+    @Test
+    void testPrisonersDilemmaInvalidMove1ValidMove2() {
+        PrisonersDilemmaGame game = new PrisonersDilemmaGame(1);
+        StaticRobot r1 = new StaticRobot("A", "Invalid");
+        StaticRobot r2 = new StaticRobot("B", "Cooperate");
+        game.run(r1, r2);
+        assertEquals(0, r1.getScore());
+        assertEquals(5, r2.getScore());
+    }
+
+    @Test
+    void testTournamentAddPlayerWhenOpenAndClosed() {
         List<Robot> players = new ArrayList<>();
         players.add(new DefectBot("InitialPlayer"));
         RoundRobinTournament tournament = new RoundRobinTournament("Test", players, new PrisonersDilemmaGame(1), 2);
